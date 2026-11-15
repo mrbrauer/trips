@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Palm Springs Pride · Trip Hub</title>
+<style>
+  html,body{margin:0;height:100%;background:#2b1f3a;color:#f5ece4;font:16px/1.4 system-ui,-apple-system,sans-serif}
+  .wait{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;letter-spacing:.2em;font-size:12px;text-transform:uppercase}
+  .dot{width:10px;height:10px;border-radius:50%;background:#f5ece4;animation:p 1s infinite alternate}
+  @keyframes p{to{opacity:.2}}
+</style>
+</head>
+<body>
+<div class="wait" id="wait"><div class="dot"></div>Loading trip…</div>
+<script>
+  // Page design and data live in the trip's Apps Script (bound to its Google Sheet).
+  // This shell loads it so visitors never see Apps Script's banner.
+  var TRIP_API = 'https://script.google.com/macros/s/AKfycbySt27bMWYRJEWBvoKFdR2ShfGZi8tMcVH_fnak-T4e914JJUm4gA0QdPdjxrLYZWb5dA/exec';
+  window.TRIP_API = TRIP_API;
+  fetch(TRIP_API + '?api=page')
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function (html) {
+      var inject = '<script>window.TRIP_API=' + JSON.stringify(TRIP_API) + ';<\/script>';
+      html = html.replace(/<head>/i, '<head>' + inject);
+      document.open(); document.write(html); document.close();
+    })
+    .catch(function () {
+      document.getElementById('wait').innerHTML = 'Couldn’t load the trip — refresh to try again.';
+    });
+</script>
+</body>
+</html>
